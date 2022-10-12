@@ -181,6 +181,7 @@ class Model(BenchmarkModel):
             sys.exit("ERROR: --loss-function=" + self.opt.loss_function + " is not supported")
 
         self.model = dlrm.to(self.device)
+  
         self.example_inputs = (X, lS_o, lS_i)
         if test == "train":
             self.model.train()
@@ -192,12 +193,16 @@ class Model(BenchmarkModel):
                                                 self.opt.lr_num_decay_steps)
         elif test == "eval":
             self.model.eval()
+            if self.jit:
+                print("I am here")
+                #self.model = torch.jit.freeze(torch.jit.script(self.model))
+                self.model = torch.jit.freeze(torch.jit.trace(self.model, self.example_inputs))
 
     def get_module(self):
         return self.model, self.example_inputs
 
     def eval(self) -> Tuple[torch.Tensor]:
-        out = self.model(*self.example_inputs)
+        out = self.model(self.example_inputs[0], self.example_inputs[1], self.example_inputs[2])
         return (out, )
 
     def train(self):

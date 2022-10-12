@@ -19,7 +19,15 @@ from components._impl.workers import subprocess_worker
 from torchbenchmark import _list_model_paths, ModelTask, get_metadata_from_yaml
 from torchbenchmark.util.machine_config import get_machine_state
 from torchbenchmark.util.metadata_utils import skip_by_metadata
+#import utils.benchmark as bench_utils
 
+#import utils.benchmark as bench_utils
+#num_threads = os.getenv('AIO_NUM_THREADS',32)
+#torch.set_num_threads(80)
+print("torch threads", torch.get_num_threads())
+
+#AIO_NUM_THREADS=32
+#torch.set_num_threads(64)
 def pytest_generate_tests(metafunc):
     # This is where the list of models to test can be configured
     # e.g. by using info in metafunc.config
@@ -103,7 +111,6 @@ class TestBenchNetwork:
 
         except NotImplementedError:
             print(f'Test eval on {device} is not implemented, skipping...')
-
 
 @pytest.mark.benchmark(
     warmup=True,
