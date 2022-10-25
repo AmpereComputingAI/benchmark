@@ -509,6 +509,10 @@ class ModelTask(base_task.TaskBase):
             self.worker.run(f"torch.set_grad_enabled({initial_value})")
 
     @contextlib.contextmanager
+    def print_profiler_data(self):
+        self.worker.run(f"model.print_profiler_data()")
+
+    @contextlib.contextmanager
     def watch_cuda_memory(
         self,
         skip: bool,

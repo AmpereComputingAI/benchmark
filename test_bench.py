@@ -108,6 +108,7 @@ class TestBenchNetwork:
                 benchmark.extra_info['test'] = 'eval'
                 if pytestconfig.getoption("check_opt_vs_noopt_jit"):
                     task.check_opt_vs_noopt_jit()
+            task.print_profiler_data()
 
         except NotImplementedError:
             print(f'Test eval on {device} is not implemented, skipping...')

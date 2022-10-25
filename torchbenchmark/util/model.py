@@ -1,5 +1,6 @@
 import os
 import torch
+from torch.autograd.profiler import profile
 from contextlib import contextmanager, ExitStack
 import warnings
 import inspect
@@ -221,11 +222,17 @@ class BenchmarkModel(metaclass=PostInitProcessor):
             if self.test == "train":
                 self.train()
             elif self.test == "eval":
-                out = self.eval()
+                with profile() as self.__profile:
+                    out = self.eval()
         return out
 
     def eval_in_nograd(self):
         return True
+
+    def print_profiler_data(self):
+        with open("profile.txt", 'a') as f:
+            print(self.__profile.key_averages().table(sort_by='cpu_time_total', row_limit=50), file=f)
+            torch._C._aio_profiler_print()
 
     def check_opt_vs_noopt_jit(self):
         if not self.jit:
