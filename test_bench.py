@@ -24,10 +24,15 @@ from torchbenchmark.util.metadata_utils import skip_by_metadata
 #import utils.benchmark as bench_utils
 #num_threads = os.getenv('AIO_NUM_THREADS',32)
 #torch.set_num_threads(80)
-print("torch threads", torch.get_num_threads())
+#print("torch threads", torch.get_num_threads())
 
-#AIO_NUM_THREADS=32
-#torch.set_num_threads(64)
+#AIO_NUM_THREADS=3
+try:
+    torch.set_num_threads(int(os.environ["AIO_NUM_THREADS"]))
+    print("aio torch threads", torch.get_num_threads())
+except KeyError:
+    torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"]))
+    print("omp torch threads", torch.get_num_threads())
 def pytest_generate_tests(metafunc):
     # This is where the list of models to test can be configured
     # e.g. by using info in metafunc.config
